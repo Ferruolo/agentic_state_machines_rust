@@ -5,8 +5,8 @@ use std::env;
 const ANTHROPIC_API_URL: &str = "https://api.anthropic.com/v1/messages";
 const ANTHROPIC_API_KEY: &str = "ANTHROPIC_API_KEY";
 
-trait LlmInterface {
-    fn make_call(self, prompt: String);
+pub trait LlmInterface {
+    fn make_call(&self, prompt: String) -> Result<String, Box<dyn Error>>;
 }
 
 struct Claude {
@@ -36,7 +36,7 @@ impl Claude {
                 panic!("ANTHROPIC API KEY NOT FOUND")
             }
         };
-        
+
         Self {
             extra_headers: vec![
                 format!("x-api-key: {}", api_key),
