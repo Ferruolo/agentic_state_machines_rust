@@ -24,7 +24,7 @@ impl<T> Agent<T> for LLMAgent<T> {
     fn execute(&self, input: T) -> AgentSignal<T> {
         let llm_call = self.format_data(input);
         let mut timeout: u64 = 2;
-        let mut retries = 0;
+        let mut retries: usize = 0;
         loop {
             let llm_data = llm_call.clone();
             let llm_result = self.llm.make_call(llm_data);
@@ -42,7 +42,7 @@ impl<T> Agent<T> for LLMAgent<T> {
                 // Failure
                 None => {
                     if (retries < self.max_retries) {
-                        sleep(Duration::from_secs(self.max_retries));
+                        sleep(Duration::from_secs(timeout));
                         timeout = timeout * timeout;
                         retries += 1;
                     } else {
