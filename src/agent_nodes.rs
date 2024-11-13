@@ -1,10 +1,11 @@
 
 
+#[derive()]
 pub (crate) enum AgentSignal<T> {
     Terminate(String),
     Success(T),
     Failure(T),
-    RedirectTo(i32, T)
+    RedirectTo(usize, T)
 }
 
 
@@ -13,7 +14,7 @@ pub(crate) trait Agent <T> {
 }
 
 pub(crate) struct AgenticStructure<T> {
-    agents: Vec<dyn Agent<T>>,
+    agents: Vec<Box<dyn Agent<T>>>,
     entry_point: usize,
 }
 

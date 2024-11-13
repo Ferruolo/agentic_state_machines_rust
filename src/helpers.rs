@@ -18,7 +18,7 @@ fn make_request(method: &str, path: &str, body: Option<&str>, target: &str, extr
     let body_str = match body {
         Some(body) => {
             headers.push("Content-Type: application/json".to_string()); // Changed to JSON content type
-            headers.push(format!("Content-Length: {}", body_str.len()));
+            headers.push(format!("Content-Length: {}", body.len()));
             body
         },
         None => {

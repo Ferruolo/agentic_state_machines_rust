@@ -3,20 +3,21 @@ use crate::llm::LlmInterface;
 use std::error::Error;
 use std::rc::Rc;
 use std::thread::sleep;
+use std::boxed::Box;
 use std::time::Duration;
 
 struct LLMAgent<T> {
     name: String,
     prompt: String,
     prompt_formatter: fn(&String, T) -> String,
-    return_data: fn(String) -> Result<AgentSignal<T>, dyn Error>,
+    return_data: Box<dyn Fn(String) -> Result<AgentSignal<T>, Box<dyn Error>>>,
     llm: Rc<dyn LlmInterface>,
     max_retries: usize,
 }
 
 impl<T> LLMAgent<T> {
     fn format_data(&self, data: T) -> String {
-        self.prompt_formatter(&self.prompt, data)
+        (self.prompt_formatter)(&self.prompt, data)
     }
 }
 
@@ -30,8 +31,8 @@ impl<T> Agent<T> for LLMAgent<T> {
             let llm_result = self.llm.make_call(llm_data);
             let result: Option<AgentSignal<T>> = match llm_result {
                 Ok(x) => {
-                    match self.return_data(x) {
-                        Ok(x) => x,
+                    match (self.return_data)(x) {
+                        Ok(x) => Some(x),
                         Err(_) => { None }
                     }
                 }

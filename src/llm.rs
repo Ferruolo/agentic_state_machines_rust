@@ -49,9 +49,9 @@ impl Claude {
 }
 
 impl LlmInterface for Claude {
-    fn make_call(self, prompt: String) -> Result<String, Box<dyn Error>> {
+    fn make_call(&self, prompt: String) -> Result<String, Box<dyn Error>> {
         let data = prompt.as_str();
-        let output = make_post_request(ANTHROPIC_API_URL, data, Some(self.extra_headers))?;
+        let output = make_post_request(ANTHROPIC_API_URL, data, Some(self.extra_headers.clone()))?;
         Ok(output)
     }
 }
